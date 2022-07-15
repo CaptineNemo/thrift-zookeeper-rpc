@@ -17,7 +17,7 @@ import cn.slimsmart.thrift.rpc.ThriftServiceClientProxyFactory;
 @SuppressWarnings("resource")
 public class Client {
 	public static void main(String[] args) {
-		//simple();
+//		simple();
 		spring();
 	}
 
@@ -25,18 +25,20 @@ public class Client {
 		try {
 			final ApplicationContext context = new ClassPathXmlApplicationContext("spring-context-thrift-client.xml");
 			EchoSerivce.Iface echoSerivce = (EchoSerivce.Iface) context.getBean("echoSerivce");
-			System.out.println(echoSerivce.echo("hello--echo"));
-			//关闭连接的钩子
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-                public void run() {
-                	Map<String,ThriftServiceClientProxyFactory>
-                	clientMap = context.getBeansOfType(ThriftServiceClientProxyFactory.class);
-                	for(Entry<String, ThriftServiceClientProxyFactory> client : clientMap.entrySet()){
-                		System.out.println("serviceName : "+client.getKey() + ",class obj: "+client.getValue());
-                		client.getValue().close();
-                	}
-                }
-            });
+			TThread t  = new TThread(echoSerivce);
+			t.start();
+//			System.out.println(echoSerivce.echo("hello--echo"));
+//			//关闭连接的钩子
+//			Runtime.getRuntime().addShutdownHook(new Thread() {
+//                public void run() {
+//                	Map<String,ThriftServiceClientProxyFactory>
+//                	clientMap = context.getBeansOfType(ThriftServiceClientProxyFactory.class);
+//                	for(Entry<String, ThriftServiceClientProxyFactory> client : clientMap.entrySet()){
+//                		System.out.println("serviceName : "+client.getKey() + ",class obj: "+client.getValue());
+//                		client.getValue().close();
+//                	}
+//                }
+//            });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -61,7 +63,8 @@ public class Client {
 
 	public static void simple() {
 		try {
-			TSocket socket = new TSocket("192.168.36.215", 9001);
+//			TSocket socket = new TSocket("192.168.36.215", 9001);
+			TSocket socket = new TSocket("127.0.0.1", 9001);
 			TTransport transport = new TFramedTransport(socket);
 			TProtocol protocol = new TBinaryProtocol(transport);
 			EchoSerivce.Client client = new EchoSerivce.Client(protocol);

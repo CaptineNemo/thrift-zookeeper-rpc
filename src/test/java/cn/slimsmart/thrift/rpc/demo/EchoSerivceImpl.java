@@ -7,6 +7,6 @@ public class EchoSerivceImpl implements EchoSerivce.Iface {
 
 	@Override
 	public String echo(String msg) throws TException {
-		return "server :"+msg;
+		return "Server has got your message: %s" + msg;
 	}
 }
